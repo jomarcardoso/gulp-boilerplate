@@ -12,12 +12,9 @@ const webpackstream = require('webpack-stream');
 const webpackconfig = require('./webpack.config.js');
 
 const NODE_ENV = process.env.NODE_ENV || 'development' // production || homologation
-
 const completePath =  process.env.PWD.split('/');
 const FOLDER_NAME = completePath[completePath.length - 1];
-const CDN = `https://test-secure-static.arezzo.com.br/content/${process.env.CDN}/${FOLDER_NAME}/`;
-
-console.log(process.env.PWD);
+const CDN = `https://${NODE_ENV === 'homologation' ? 'test-' : ''}secure-static.arezzo.com.br/content/${process.env.CDN}/${FOLDER_NAME}/`;
 
 function browserSync(done) {
   browsersync.init({
@@ -58,11 +55,11 @@ function cssCdnizer() {
   return gulp
     .src('./dist/css/main.css')
     .pipe(cdnizer({
-      defaultCDNBase: '//my.cdn.url/',
+      defaultCDNBase: CDN,
       relativeRoot: 'css',
       files: ['**/*.{gif,png,jpg,jpeg}']
     }))
-    .pipe(gulp.dest('./dist//css/'));
+    .pipe(gulp.dest('./dist/css/'));
 }
 
 function img() {
