@@ -1,3 +1,4 @@
+const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const browsersync = require('browser-sync').create();
 const cdnizer = require("gulp-cdnizer");
@@ -42,18 +43,32 @@ function html() {
     .pipe(browsersync.stream());
 }
 
+function htmlCdnizer() {
+  return gulp
+    .src('./dist/**/*.html')
+    .pipe(cdnizer({
+      defaultCDNBase: CDN,
+      files: ['**/*.{gif,png,jpg,jpeg}']
+    }))
+    .pipe(gulp.dest('./dist/'));
+}
+
 function css() {
   return gulp
     .src('./assets/css/**/*.scss')
     .pipe(plumber())
     .pipe(sass({ outputStyle: 'expanded' }))
+    .pipe(autoprefixer({
+      browsers: ['last 2 versions'],
+      grid: 'autoplace'
+    }))
     .pipe(gulp.dest('./dist/css/'))
     .pipe(browsersync.stream());
 }
 
 function cssCdnizer() {
   return gulp
-    .src('./dist/css/main.css')
+    .src('./dist/css/**/*.css')
     .pipe(cdnizer({
       defaultCDNBase: CDN,
       relativeRoot: 'css',
@@ -91,8 +106,18 @@ function js() {
     .pipe(webpackstream(webpackconfig))
     // folder only, filename is specified in webpack config
     .pipe(gulp.dest('./dist/js/'))
-    .pipe(browsersync.stream())
+    .pipe(browsersync.stream());
+}
 
+function jsCdnizer() {
+  return gulp
+    .src('./dist/js/**/*.js')
+    .pipe(cdnizer({
+      defaultCDNBase: CDN,
+      relativeRoot: 'js',
+      files: ['**/*.{gif,png,jpg,jpeg}']
+    }))
+    .pipe(gulp.dest('./dist/css/'));
 }
 
 function watchFiles() {
@@ -103,10 +128,6 @@ function watchFiles() {
 }
 
 function babelize() {
-  console.log(NODE_ENV);
-  console.log(FOLDER_NAME);
-  console.log(CDN);
-
   return gulp
   .src('./dist/js/**/*')
   .pipe(babel({ presets: ['@babel/env'] }))
@@ -119,7 +140,7 @@ const watch = gulp.parallel(watchFiles, browserSync);
 exports.build = gulp.series(
   clean,
   gulp.parallel(css, img, js, html),
-  cssCdnizer,
+  gulp.parallel(cssCdnizer, htmlCdnizer, jsCdnizer),  
   babelize);
 
-exports.default = gulp.series(clean, gulp.parallel(css, img, js, html), watch);
+exports.default = gulp.series(clean, gulp.parallel(css, img, js, html), watch); 
