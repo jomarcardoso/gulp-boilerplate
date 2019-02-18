@@ -1,5 +1,6 @@
 const babel = require('gulp-babel');
 const browsersync = require('browser-sync').create();
+const cdnizer = require("gulp-cdnizer");
 const del = require('del');
 const gulp = require('gulp');
 const imagemin = require('gulp-imagemin');
@@ -45,6 +46,17 @@ function css() {
     .pipe(sass({ outputStyle: 'expanded' }))
     .pipe(gulp.dest('./dist/css/'))
     .pipe(browsersync.stream());
+}
+
+exports.csscdnizer = function cssCdnizer() {
+  return gulp
+    .src('./dist/css/main.css')
+    .pipe(cdnizer({
+      defaultCDNBase: '//my.cdn.url/',
+      relativeRoot: 'css',
+      files: ['**/*.{gif,png,jpg,jpeg}']
+    }))
+    .pipe(gulp.dest('./dist//css/'));
 }
 
 function img() {
@@ -97,19 +109,23 @@ function babelize() {
 
 const watch = gulp.parallel(watchFiles, browserSync);
 
-exports.build = gulp.series(gulp.parallel(css, img, js, html), babelize);
+exports.build = gulp.series(clean, gulp.parallel(css, img, js, html), babelize);
 
-exports.buildhml = gulp.series((cb) => { 
+exports.buildhml = gulp.series(
+  clean,
+  (cb) => { 
     mode = 'homologation';
     cb();
   }, 
   gulp.parallel(css, img, js, html), babelize);
 
-exports.buildprd = gulp.series((cb) => { 
+exports.buildprd = gulp.series(
+  clean,
+  (cb) => { 
     mode = 'production';
     cb();
   }, 
   gulp.parallel(css, img, js, html), babelize);
 
 
-exports.default = gulp.series(gulp.parallel(css, img, js, html), watch);
+exports.default = gulp.series(clean, gulp.parallel(css, img, js, html), watch);
