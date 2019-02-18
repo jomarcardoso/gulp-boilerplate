@@ -2,8 +2,10 @@ const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const browsersync = require('browser-sync').create();
 const cdnizer = require("gulp-cdnizer");
+const cleanCSS = require('gulp-clean-css');
 const del = require('del');
 const gulp = require('gulp');
+const htmlmin = require('gulp-htmlmin');
 const imagemin = require('gulp-imagemin');
 const newer = require('gulp-newer');
 const plumber = require('gulp-plumber');
@@ -53,6 +55,13 @@ function htmlCdnizer() {
     .pipe(gulp.dest('./dist/'));
 }
 
+function htmlMinify() {
+  return gulp
+    .src('./dist/**/*.html')
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(gulp.dest('./dist/'));
+}
+
 function css() {
   return gulp
     .src('./assets/css/**/*.scss')
@@ -74,6 +83,13 @@ function cssCdnizer() {
       relativeRoot: 'css',
       files: ['**/*.{gif,png,jpg,jpeg}']
     }))
+    .pipe(gulp.dest('./dist/css/'));
+}
+
+function cssMinify() {
+  return gulp
+    .src('./dist/css/**/*.css')
+    .pipe(cleanCSS({compatibility: 'ie11'}))
     .pipe(gulp.dest('./dist/css/'));
 }
 
@@ -141,6 +157,6 @@ exports.build = gulp.series(
   clean,
   gulp.parallel(css, img, js, html),
   gulp.parallel(cssCdnizer, htmlCdnizer, jsCdnizer),  
-  babelize);
+  gulp.parallel(babelize, htmlMinify, cssMinify));
 
 exports.default = gulp.series(clean, gulp.parallel(css, img, js, html), watch); 
