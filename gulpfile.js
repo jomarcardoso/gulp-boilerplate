@@ -15,7 +15,14 @@ const webpackstream = require('webpack-stream');
 const webpackconfig = require('./webpack.config.js');
 
 const NODE_ENV = process.env.NODE_ENV || 'development' // production || homologation
-const completePath =  process.env.PWD.split('/');
+
+let completePath = '';
+if (process.env.INIT_CWD) {
+  completePath =  process.env.INIT_CWD.split('/');
+} else {
+  completePath =  process.env.PWD.split('/');
+}
+
 const FOLDER_NAME = completePath[completePath.length - 1];
 const CDN = `https://${NODE_ENV === 'homologation' ? 'test-' : ''}secure-static.arezzo.com.br/content/${process.env.CDN}/${FOLDER_NAME}/`;
 
