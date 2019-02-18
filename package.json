@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "yarn && gulp",
-    "build-hml": "gulp deployHomologation",
-    "build-prd": "gulp deployProduction"
+    "build-hml": "cross-env NODE_ENV=homologation CDN=arz gulp build",
+    "build-prd": "cross-env NODE_ENV=production CDN=arz gulp build",
+    "build": "gulp build"
   },
   "author": "Jomar A. Cardoso",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "@babel/core": "^7.3.3",
     "@babel/preset-env": "^7.3.1",
     "browser-sync": "^2.26.3",
+    "cross-env": "^5.2.0",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",

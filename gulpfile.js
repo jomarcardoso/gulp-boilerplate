@@ -11,7 +11,13 @@ const uglify = require('gulp-uglify');
 const webpackstream = require('webpack-stream');
 const webpackconfig = require('./webpack.config.js');
 
-let mode = 'development' // production || homologation
+const NODE_ENV = process.env.NODE_ENV || 'development' // production || homologation
+
+const completePath =  process.env.PWD.split('/');
+const FOLDER_NAME = completePath[completePath.length - 1];
+const CDN = `https://test-secure-static.arezzo.com.br/content/${process.env.CDN}/${FOLDER_NAME}/`;
+
+console.log(process.env.PWD);
 
 function browserSync(done) {
   browsersync.init({
@@ -48,7 +54,7 @@ function css() {
     .pipe(browsersync.stream());
 }
 
-exports.csscdnizer = function cssCdnizer() {
+function cssCdnizer() {
   return gulp
     .src('./dist/css/main.css')
     .pipe(cdnizer({
@@ -89,7 +95,7 @@ function js() {
     // folder only, filename is specified in webpack config
     .pipe(gulp.dest('./dist/js/'))
     .pipe(browsersync.stream())
-  
+
 }
 
 function watchFiles() {
@@ -100,6 +106,10 @@ function watchFiles() {
 }
 
 function babelize() {
+  console.log(NODE_ENV);
+  console.log(FOLDER_NAME);
+  console.log(CDN);
+
   return gulp
   .src('./dist/js/**/*')
   .pipe(babel({ presets: ['@babel/env'] }))
@@ -109,23 +119,10 @@ function babelize() {
 
 const watch = gulp.parallel(watchFiles, browserSync);
 
-exports.build = gulp.series(clean, gulp.parallel(css, img, js, html), babelize);
-
-exports.buildhml = gulp.series(
+exports.build = gulp.series(
   clean,
-  (cb) => { 
-    mode = 'homologation';
-    cb();
-  }, 
-  gulp.parallel(css, img, js, html), babelize);
-
-exports.buildprd = gulp.series(
-  clean,
-  (cb) => { 
-    mode = 'production';
-    cb();
-  }, 
-  gulp.parallel(css, img, js, html), babelize);
-
+  gulp.parallel(css, img, js, html),
+  cssCdnizer,
+  babelize);
 
 exports.default = gulp.series(clean, gulp.parallel(css, img, js, html), watch);
