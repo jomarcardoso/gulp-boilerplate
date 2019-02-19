@@ -1,9 +1,18 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
 root = true
 
+# Unix-style newlines with a newline ending every file
 [*]
-charset = utf-8
 end_of_line = lf
 insert_final_newline = true
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+charset = utf-8
+
+# 2 space indentation
 ensure_newline_at_eof_on_save = true
 indent_style = space
 indent_size = 2
