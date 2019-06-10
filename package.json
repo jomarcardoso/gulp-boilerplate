@@ -1,40 +1,49 @@
 {
   "name": "hotsites-boilerplate",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "yarn && gulp",
-    "build-hml": "yarn && cross-env NODE_ENV=homologation CDN=arz gulp build",
-    "build-prd": "yarn && cross-env NODE_ENV=production CDN=arz gulp build",
-    "build": "gulp build"
+    "start:local": "yarn && cross-env CDN_LOCAL=true gulp",
+    "build": "gulp build",
+    "build:hml": "yarn && cross-env NODE_ENV=homologation PATH_STATIC=static-hml PATH_CDN=cdn-hml API=api-hml gulp build",
+    "build:prd": "yarn && cross-env NODE_ENV=production PATH_STATIC=static-prd PATH_CDN=cdn-prd API=api-prd gulp build"
   },
-  "author": "Jomar A. Cardoso",
+  "author": "Sustentação OMNI",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.3.3",
     "@babel/preset-env": "^7.3.1",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "babel-loader": "^8.0.5",
     "browser-sync": "^2.26.3",
     "cross-env": "^5.2.0",
     "del": "^3.0.0",
     "file-loader": "^3.0.1",
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^6.0.0",
-    "gulp-babel": "^8.0.0",
     "gulp-cdnizer": "^2.0.2",
     "gulp-clean-css": "^4.0.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-imagemin": "^5.0.3",
+    "gulp-jsonminify": "^1.1.0",
     "gulp-newer": "^1.4.0",
     "gulp-plumber": "^1.2.1",
+    "gulp-pug": "^4.0.1",
     "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.1",
     "gulp-webp": "^4.0.1",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-webp": "^5.0.0",
+    "jpegtran-bin": "^4.0.0",
     "url-loader": "^1.1.2",
     "webpack": "^4.29.4",
+    "webpack-merge": "^4.2.1",
     "webpack-stream": "^5.2.1"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1"
   }
 }
